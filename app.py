@@ -228,7 +228,6 @@ def crear_pregunta():
 
 @app.route("/nueva_encuesta/<code>")
 def nueva_encuesta_code(code):
-
     return render_template("nueva_encuesta.html")
 
 #-------------------------------
@@ -284,18 +283,54 @@ def crear_encuesta():
 """
 #-------------------------------
 
-@app.route("/editar_encuesta", methods=['POST'])
-def editar_encuesta():
+@app.route("/editar_encuesta/<num>") #, methods=['POST']
+def editar_encuesta(num):
+    cur1 = mysql.connection.cursor()
+    cur1.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado,E.preguntas FROM Encuestas as E WHERE E.id_encuesta=%s",[num])
+
+    pollv = cur1.fetchall()
+    cur2 = mysql.connection.cursor()
+    cur2.execute("SELECT P.enunciado FROM Preguntas as P WHERE P.id_encuesta=%s",[num])
+    questionv=cur2.fetchall()
+    return render_template("editar_encuesta.html"
+    ,pollv=pollv
+    ,questionv=questionv)
+
+#-------------------------------
+
+@app.route('/eliminar_encuesta/<num>')
+def eliminar_encuesta(num):
+   
+    query='DELETE FROM Encuestas WHERE id_encuesta ='+str(num)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
+
+    return redirect(url_for('encuestas'))
+
+#-------------------------------
+
+@app.route('/enviar_encuesta/<num>')
+def enviar_encuesta(num):
+   
+    query="UPDATE Encuestas SET estado='Abierta' WHERE id_encuesta ="+str(num)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
     
-    if request.method =='POST':
-        
-        code=request.form['code']
-        #title=request.form['title']
-        #des=request.form['description']
-        newpoll=polls.getPollcode(code)
-        print(newpoll)
+    return redirect(url_for('encuestas'))
+
+#-------------------------------
+
+@app.route('/cerrar_encuesta/<num>')
+def cerrar_encuesta(num):
+   
+    query="UPDATE Encuestas SET estado='Cerrada' WHERE id_encuesta ="+str(num)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
     
-    return render_template("editar_encuesta.html")
+    return redirect(url_for('encuestas'))
 
 #-------------------------------
 #-------------------------------
@@ -385,42 +420,5 @@ def sigin():
 
 #Operaciónes con encuestas
 
-
-#-------------------------------
-#-------------------------------
-
-@app.route('/eliminar_encuesta/<num>')
-def eliminar_encuesta(num):
-   
-    query='DELETE FROM Encuestas WHERE id_encuesta ='+str(num)
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    mysql.connection.commit()
-
-    return redirect(url_for('encuestas'))
-
-#-------------------------------
-
-@app.route('/enviar_encuesta/<num>')
-def enviar_encuesta(num):
-   
-    query="UPDATE Encuestas SET estado='Abierta' WHERE id_encuesta ="+str(num)
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    mysql.connection.commit()
-    
-    return redirect(url_for('encuestas'))
-
-#-------------------------------
-
-@app.route('/cerrar_encuesta/<num>')
-def cerrar_encuesta(num):
-   
-    query="UPDATE Encuestas SET estado='Cerrada' WHERE id_encuesta ="+str(num)
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    mysql.connection.commit()
-    
-    return redirect(url_for('encuestas'))
 
 #-------------------------------

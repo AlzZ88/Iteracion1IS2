@@ -25,23 +25,29 @@
             <button class="btn btn-sm btn-outline-secondary" type="button">Volver</button>
           </a>
           <a class="nav-link" href="/">
-            <button class="btn btn-sm btn-outline-secondary" type="button">Nueva Pregunta</button>
-          </a>
-          <a class="nav-link" href="/login">
             <button class="btn btn-outline-danger" type="button">LogOut</button>
         </a> 
         </div>
         </div>
       </div>
     </nav>
-    <div>
-      <h1 name="title"></h1>
-      <p name="description"></p>
-      <hr>
+    {% for poll in pollv %}
       <div>
-
+        <h1 name="title">N°{{poll.0}} {{poll.1}}</h1> 
+        <hr>
+        <h5>Descripción:</h5>
+        <p name="description">{{poll.2}}</p>
+        <hr>
+        <p name="state"> <b>Estado:</b> "{{poll.3}}"</p>
+        <p><b>Número de preguntas:</b> {{poll.4}}</p>
+        <hr>
+        <h4>Preguntas:</h4>
+        {% for question in questionv %}
+          <h5>{{question.0}}</h5>
+           
+        {% endfor %}
       </div>
-    </div>
+    {% endfor %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 	
 </body>
