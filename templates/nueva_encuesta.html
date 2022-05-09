@@ -21,14 +21,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link" href="/encuestas">
-            <button class="btn btn-sm btn-outline-secondary" type="button">Volver</button>
+          <a class="nav-link" href="/cancelar_nueva_encuesta">
+            <button class="btn btn-outline-secondary" type="button">Volver</button>
           </a>
           <a class="nav-link" href="/">
-            <button class="btn btn-sm btn-outline-secondary" type="button">Nueva Pregunta</button>
+            <button class="btn btn-outline-secondary" type="button">Nueva Pregunta</button>
           </a> 
           <a class="nav-link" href="/login">
-            <button class="btn btn-outline-danger" type="button">LogOut</button>
+            <button class="btn btn-danger" type="button">LogOut</button>
         
         </a>
         </div>
@@ -37,49 +37,49 @@
     </nav>
   
 
-    
-    <form action="/crear_encuesta" method="POST">
-      <div class="container cont">
-        <h1 class="p-3 mb-2  ">Encuesta {{code}}</h1>
-        <div class="mb-3">
-          <label for="Input1" class="form-label">Titulo</label>
-          <input  class="form-control" name="title"  placeholder="Nueva encuesta nacional">
-        </div>
-        <div class="mb-3">
-          <label for="Textarea1" class="form-label">Descripción</label>
-          <textarea class="form-control"  name="description" placeholder="Esta encuesta busca saber la percepción sobre muchos temas." rows="2"></textarea>
-        </div>
-        <div class="mb-3">
-          <button type="submit" class="btn btn-success me-2 pad">Guardar</button>  
-        </div>
-        
-      </div>
-    </form>
-    <form action="/crear_pregunta" method="POST">
-      <div class="container cont" >
-
-        <div class="mb-3">
-          <h1 class="p-3 mb-2  ">Nueva Pregunta</h1>
-          <label for="Input2" class="form-label">Enunciado</label>
-          <textarea class="form-control"  name="enunciado" placeholder="¿Cómo te encuestas hoy?" rows="2"></textarea>
-        </div> 
-        <div class="mb-3">
-          <!--<button type="button" class="btn btn-success me-2 pad">Agregar Opción</button>-->
-          <button type="submit" class="btn btn-warning me-2 pad">nueva pregunta</button>
-        </div>
-        <!--
-        <div class="mb-3">
-          <div class="container ">
-            <div class="mb-3">
-              <label for="option1" class="form-label">Opcion 1</label>
-              <input  class="form-control" name="option1"  placeholder="bien bien gracias">
-              <label for="option2" class="form-label">Opcion 2</label>
-              <input  class="form-control" name="option2"  placeholder="me encuetro mal ">
-            </div>  
+      <form action="/crear_encuesta" method="POST">
+        <div class="container cont">
+          <h1 class="p-3 mb-2  ">Encuesta </h1>
+          <div class="mb-3">
+            <label for="Input1" class="form-label"> Título:</label>
+            <input  class="form-control" name="title"  placeholder="Nueva encuesta nacional">
           </div>
-        </div>--> 
-      </div>
-    </form>  
+          <div class="mb-3">
+            <label for="Textarea1" class="form-label"> Descripción:</label>
+            <textarea class="form-control"  name="description" placeholder="Esta encuesta busca saber la percepción sobre muchos temas." rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <button type="submit" class="btn btn-success me-2 pad">Guardar</button>  
+          </div>
+          
+        </div>
+      </form>
+      <form action="/crear_pregunta" method="POST">
+        <div class="container cont" >
+  
+          <div class="mb-3">
+            <h1 class="p-3 mb-2  "> </h1>
+            <label for="Input2" class="form-label">Encunciado</label>
+            <textarea class="form-control"  name="enunciado" placeholder="¿Cómo te encuestas hoy?" rows="2"></textarea>
+          </div> 
+          <div class="mb-3">
+            <!--<button type="button" class="btn btn-success me-2 pad">Agregar Opción</button>-->
+            <button type="submit" class="btn btn-warning me-2 pad">nueva pregunta</button>
+          </div>
+          <!--
+          <div class="mb-3">
+            <div class="container ">
+              <div class="mb-3">
+                <label for="option1" class="form-label">Opcion 1</label>
+                <input  class="form-control" name="option1"  placeholder="bien bien gracias">
+                <label for="option2" class="form-label">Opcion 2</label>
+                <input  class="form-control" name="option2"  placeholder="me encuetro mal ">
+              </div>  
+            </div>
+          </div>--> 
+        </div>
+      </form>
+      
 
     
     

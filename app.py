@@ -192,11 +192,13 @@ def nueva_encuesta():
     des="sin descripción"
     cur.execute("INSERT INTO Encuestas (nombre, descripcion,estado, preguntas) VALUES (%s,%s,'Por realizar',0)",(title,des))
     mysql.connection.commit()
+
     cur.execute("SELECT LAST_INSERT_ID()")
     code = cur.fetchall()
     
     for row in code:
         lastPoll.setCode(row[0])
+        
     
     return redirect(url_for('nueva_encuesta_code', code = lastPoll.getCode()))
 
@@ -209,7 +211,7 @@ def crear_pregunta():
     lastPoll.setQuestion(lastPoll.getQuestion()+1)
     enunciado=request.form['enunciado']
     
-    print(enunciado)
+    #print(enunciado)
     
     #query="INSERT INTO Preguntas (id_encuesta,enunciado) VALUES ("+str(code)+","+enunciado+")"
     
@@ -228,9 +230,38 @@ def crear_pregunta():
 
 @app.route("/nueva_encuesta/<code>")
 def nueva_encuesta_code(code):
-    return render_template("nueva_encuesta.html")
+    """
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado,E.preguntas FROM Encuestas as E WHERE E.id_encuesta=%s",[code])
+    pollv = cur.fetchall()
+    
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO Preguntas (id_encuesta,enunciado) VALUES (%s,'nueva pregunta')",(code))
+    mysql.connection.commit()
+
+
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT P.id_encuesta,P.enunciado FROM Preguntas as P WHERE P.id_encuesta=%s",[code])
+    questions = cur.fetchall()
+    """
+    
+    return render_template("nueva_encuesta.html"
+    ,code=code)
+
+    #,pollv=pollv
+    #,questions=questions
 
 #-------------------------------
+@app.route("/cancelar_nueva_encuesta")
+def cancelar_nueva_encuesta():
+    query='DELETE FROM Encuestas WHERE id_encuesta ='+str(lastPoll.getCode())
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
+
+    return redirect(url_for('encuestas'))
 
 @app.route("/crear_encuesta", methods=['POST'])
 def crear_encuesta():
@@ -248,12 +279,12 @@ def crear_encuesta():
         cur = mysql.connection.cursor()
         cur.execute(query)
         mysql.connection.commit()
-        
+        """
         newpoll=Poll()
         newpoll.setCode(code)
         newpoll.setTitle(title)
         newpoll.setDescription(des)
-        polls.addPoll(newpoll)
+        polls.addPoll(newpoll)"""
         
     return redirect(url_for('encuestas'))
 
@@ -300,7 +331,11 @@ def editar_encuesta(num):
 
 @app.route('/eliminar_encuesta/<num>')
 def eliminar_encuesta(num):
-   
+    
+    query='DELETE FROM Preguntas WHERE id_encuesta ='+str(num)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+
     query='DELETE FROM Encuestas WHERE id_encuesta ='+str(num)
     cur = mysql.connection.cursor()
     cur.execute(query)
