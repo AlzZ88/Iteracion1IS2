@@ -1,50 +1,53 @@
 from flask import Flask , render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime
-#(id_encuesta, nombre, descripcion, estado, fecha_inicio, fecha_fin , id_encuestador)
 
-
+#Encuesta: Guarda los datos de las encuestas que se esten manipulando.
 
 class Poll:
 
-    _code=-1
-    _title="Encuesta sin Título"
-    _description="--?--"
-    _state="Por realizar"
-    _id_encuestador=0
-    _question=0
-    def __init__ (self):
+    _code=-1 #Identificador de la encuesta creada.
+    _title="Encuesta sin Título" #Título de la encuesta creada.
+    _description="--?--" #Descripción de la encuesta creada.
+    _state="Por realizar" #Estado de la encuesta 'Por realizar','Abierta','Cerrada'.
+    _id_encuestador=0 #Id del encuestador que crea la encuesta. (no implemenado)
+    _question=0 #Número de encuestas.
+    
+    def __init__ (self): #Constructor de la clase Poll
         self._state =-1
         self._state = "Por Realizar"
-    def addCode(self,code):
+    
+    def setCode(self,code):#seter del atributo code
         self._code=code
 
-    def addQuestion(self,question):
+    def setQuestion(self,question): #seter del atributo question
         self._question=question
 
-    def addTitle(self,title):
+    def setTitle(self,title): #seter del atributo title
         self._title = title
     
-    def addDescription(self,description):
+    def setDescription(self,description):#seter del atributo description
         self._description = description
     
-    def setState(self,state):
+    def setState(self,state):#seter del atributo state
         self._state = state
-    def getQuestion(self):
+    
+    def getQuestion(self): #geter del atributo question
         return self._question
 
-    def getTitle(self):
+    def getTitle(self): #geter del atributo title
         return self._title
     
-    def getCode(self):
+    def getCode(self): #geter del atributo code
         return self._code
     
-    def getDescription(self):
+    def getDescription(self):#geter del atributo description
         return self._description
    
-    def getState(self):
+    def getState(self):#geter del atributo state
         return self._state    
 
+"""
 class SystemPoll:
     
     def __init__ (self):
@@ -108,7 +111,7 @@ class SystemPoll:
 
     def getCount(self):
         return len(self.pollsClosed) + len(self.pollsOpen) + len(self.pollsReady)
-    
+"""    
 
 
 
@@ -132,19 +135,26 @@ app.secret_key = "mysecretkey"
 
 
 # Se inicializa el almacen de encuestas
-polls=SystemPoll()
-lastPoll=Poll()
+#polls=SystemPoll()
+
+#Variables Globales
+lastPoll=Poll()# hace referencia a la ultima encuesta creada
 
 
 
-
-
-
+#-------------------------------
 
 @app.route("/")
 def home():#----> pagina home
     return render_template('index.html')
 
+#-------------------------------
+#-------------------------------
+
+#Operaciones con Encuestas
+
+#-------------------------------
+#-------------------------------
 
 @app.route("/encuestas")
 def encuestas():#----> pagina
@@ -172,6 +182,8 @@ def encuestas():#----> pagina
         pollsOpen=Open,
         pollsClosed=Closed)
 
+#-------------------------------
+
 @app.route("/nueva_encuesta")
 def nueva_encuesta():
 
@@ -184,14 +196,17 @@ def nueva_encuesta():
     code = cur.fetchall()
     
     for row in code:
-        lastPoll.addCode(row[0])
+        lastPoll.setCode(row[0])
     
     return redirect(url_for('nueva_encuesta_code', code = lastPoll.getCode()))
 
+#-------------------------------
+
 @app.route("/crear_pregunta", methods=['POST'])
 def crear_pregunta():
+
     code=lastPoll.getCode()
-    lastPoll.addQuestion(lastPoll.getQuestion()+1)
+    lastPoll.setQuestion(lastPoll.getQuestion()+1)
     enunciado=request.form['enunciado']
     
     print(enunciado)
@@ -209,26 +224,24 @@ def crear_pregunta():
    
     return redirect(url_for('nueva_encuesta_code', code = lastPoll.getCode()))
 
+#-------------------------------
+
 @app.route("/nueva_encuesta/<code>")
 def nueva_encuesta_code(code):
 
     return render_template("nueva_encuesta.html")
 
+#-------------------------------
 
 @app.route("/crear_encuesta", methods=['POST'])
 def crear_encuesta():
     
     if request.method =='POST':
+        
         code=lastPoll.getCode()
         title=request.form['title']
         des=request.form['description']
         print("Ingresar en base de datos"+ str(code) + str(title)+" y "+str(des)+".")
-        
-        """
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO Encuestas (nombre, descripcion,estado) VALUES (%s,%s,'Por realizar')",(title,des))
-        mysql.connection.commit()
-        """
         
         query="UPDATE Encuestas SET nombre='"+str(title)+"',descripcion='"+str(des)+"' WHERE id_encuesta ="+str(code)
         print(query)
@@ -238,18 +251,16 @@ def crear_encuesta():
         mysql.connection.commit()
         
         newpoll=Poll()
-        newpoll.addCode(code)
-        newpoll.addTitle(title)
-        newpoll.addDescription(des)
+        newpoll.setCode(code)
+        newpoll.setTitle(title)
+        newpoll.setDescription(des)
         polls.addPoll(newpoll)
         
     return redirect(url_for('encuestas'))
 
-
-
-
-
+#-------------------------------
 """
+
 @app.route("/crear_encuesta", methods=['POST'])
 def crear_encuesta():
     
@@ -264,24 +275,35 @@ def crear_encuesta():
         mysql.connection.commit()
         
         newpoll=Poll(polls.getCount()+1)
-        newpoll.addTitle(title)
-        newpoll.addDescription(des)
+        newpoll.setTitle(title)
+        newpoll.setDescription(des)
         polls.addPoll(newpoll)
 
     return redirect(url_for('encuestas'))
 
-
 """
+#-------------------------------
+
 @app.route("/editar_encuesta", methods=['POST'])
 def editar_encuesta():
     
     if request.method =='POST':
+        
         code=request.form['code']
         #title=request.form['title']
         #des=request.form['description']
         newpoll=polls.getPollcode(code)
         print(newpoll)
+    
     return render_template("editar_encuesta.html")
+
+#-------------------------------
+#-------------------------------
+
+# Operaciones con Encuestados
+
+#-------------------------------
+#-------------------------------
 
 @app.route('/encuestados')
 def encuestados():
@@ -292,6 +314,7 @@ def encuestados():
     
     return render_template("encuestados.html", encuestados = data)#'encuestados'
 
+#-------------------------------
 
 @app.route('/encuestados/<name>')
 def estadoEncuestados(name):
@@ -301,7 +324,7 @@ def estadoEncuestados(name):
     data = cur.fetchall()
     return render_template("encuestados.html", encuestados = data)#'encuestados'
 
-
+#-------------------------------
 
 @app.route('/nuevo_enc', methods=['POST'])
 def nuevo_enc():
@@ -316,6 +339,7 @@ def nuevo_enc():
 
     return redirect(url_for('encuestados'))
 
+#-------------------------------
     
 @app.route('/editar_encuestado/<email>')
 def get_encuestado(email):
@@ -324,6 +348,8 @@ def get_encuestado(email):
     cur.execute('SELECT * FROM Encuestados WHERE correo = %s', [email])
     data = cur.fetchall()
     return render_template('e-encuestado.html', encuestado = data[0])
+
+#-------------------------------
 
 @app.route('/eliminar_encuestado/<email>')
 def elim_encuestado(email):
@@ -335,12 +361,33 @@ def elim_encuestado(email):
     
     return redirect(url_for('encuestados'))
 
+#-------------------------------
+#-------------------------------
+
+#Login
+
+#-------------------------------
+#-------------------------------
+
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+#-------------------------------
+
 @app.route("/sigin")
 def sigin():
     return render_template("sigin.html")
+
+#-------------------------------
+#-------------------------------
+
+
+#Operaciónes con encuestas
+
+
+#-------------------------------
+#-------------------------------
 
 @app.route('/eliminar_encuesta/<num>')
 def eliminar_encuesta(num):
@@ -349,7 +396,10 @@ def eliminar_encuesta(num):
     cur = mysql.connection.cursor()
     cur.execute(query)
     mysql.connection.commit()
+
     return redirect(url_for('encuestas'))
+
+#-------------------------------
 
 @app.route('/enviar_encuesta/<num>')
 def enviar_encuesta(num):
@@ -358,7 +408,11 @@ def enviar_encuesta(num):
     cur = mysql.connection.cursor()
     cur.execute(query)
     mysql.connection.commit()
+    
     return redirect(url_for('encuestas'))
+
+#-------------------------------
+
 @app.route('/cerrar_encuesta/<num>')
 def cerrar_encuesta(num):
    
@@ -366,5 +420,7 @@ def cerrar_encuesta(num):
     cur = mysql.connection.cursor()
     cur.execute(query)
     mysql.connection.commit()
+    
     return redirect(url_for('encuestas'))
 
+#-------------------------------
