@@ -119,7 +119,9 @@ nav{
 	text-align: center;
 
 }
-
+ul {
+    list-style: none;
+}
 html{
 	background: #F7F5F2;
 }

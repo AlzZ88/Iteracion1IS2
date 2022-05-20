@@ -1,125 +1,12 @@
 from flask import Flask , render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime
-
-#Encuesta: Guarda los datos de las encuestas que se esten manipulando.
-
-class Poll:
-
-    _code=-1 #Identificador de la encuesta creada.
-    _title="Encuesta sin Título" #Título de la encuesta creada.
-    _description="--?--" #Descripción de la encuesta creada.
-    _state="Por realizar" #Estado de la encuesta 'Por realizar','Abierta','Cerrada'.
-    _id_encuestador=0 #Id del encuestador que crea la encuesta. (no implemenado)
-    _question=0 #Número de encuestas.
-    
-    def __init__ (self): #Constructor de la clase Poll
-        self._state =-1
-        self._state = "Por Realizar"
-    
-    def setCode(self,code):#seter del atributo code
-        self._code=code
-
-    def setQuestion(self,question): #seter del atributo question
-        self._question=question
-
-    def setTitle(self,title): #seter del atributo title
-        self._title = title
-    
-    def setDescription(self,description):#seter del atributo description
-        self._description = description
-    
-    def setState(self,state):#seter del atributo state
-        self._state = state
-    
-    def getQuestion(self): #geter del atributo question
-        return self._question
-
-    def getTitle(self): #geter del atributo title
-        return self._title
-    
-    def getCode(self): #geter del atributo code
-        return self._code
-    
-    def getDescription(self):#geter del atributo description
-        return self._description
-   
-    def getState(self):#geter del atributo state
-        return self._state    
-
-"""
-class SystemPoll:
-    
-    def __init__ (self):
-        self.pollsReady  = []
-        self.pollsOpen   = []
-        self.pollsClosed = []
-    def addPoll(self,poll):
-
-        if poll.getState() == "Por realizar":
-            self.pollsReady.append(poll)
-        elif poll.getState() == "Abierta":
-            self.pollsOpen.append(poll)
-        elif poll.getState() == "Cerrada":
-            self.pollsClosed.append(poll)
-        else:
-            print("error estado no valido")
-        
-    def removePoll(self,code):
-        
-        for i in self.pollsReady:
-            if i.getCode()== code:
-               self.pollsReady.remove(i)
-
-        for i in self.pollsOpen:
-            if i.getCode()== code:
-               self.pollsOpen.remove(i)
-
-        for i in self.pollsClosed:
-            if i.getCode()== code:
-               self.pollsClosed.remove(i) 
-    
-    def getPoll(self,code):
-        
-        for i in self.pollsReady:
-            if i.getCode()== code:
-               return i
-
-        for i in self.pollsOpen:
-            if i.getCode()== code:
-               return i
-
-        for i in self.pollsClosed:
-            if i.getCode()== code:
-               return i
-       
-    
-    def getAll(self):
-
-        return self.polls
-    
-    def getState(self,state):
-
-        if state == "Por realizar":
-            return self.pollsReady
-        elif state == "Abierta":
-            return self.pollsOpen
-        elif state == "Cerrada":
-            return self.pollsClosed
-        else:
-            print("error estado no valido")
-
-    def getCount(self):
-        return len(self.pollsClosed) + len(self.pollsOpen) + len(self.pollsReady)
-"""    
-
-
+from modules import Poll
 
 
 
 
 app = Flask(__name__)#-------> Main de la aplicación
-
 
 #mysql connection
 app.config['MYSQL_HOST']='103.195.100.230'
@@ -131,9 +18,6 @@ mysql = MySQL(app)
 #settings
 app.secret_key = "mysecretkey"
 
-
-
-
 # Se inicializa el almacen de encuestas
 #polls=SystemPoll()
 
@@ -141,12 +25,117 @@ app.secret_key = "mysecretkey"
 lastPoll=Poll()# hace referencia a la ultima encuesta creada
 
 
-
 #-------------------------------
+
 
 @app.route("/")
 def home():#----> pagina home
     return render_template('index.html')
+
+#-------------------------------
+#-------------------------------
+
+#Operaciones con preguntas
+
+#-------------------------------
+#-------------------------------
+@app.route("/crear_pregunta", methods=['POST'])
+def crear_pregunta():
+    
+    code=lastPoll.getCode()
+    lastPoll.setQuestion(lastPoll.getQuestion()+1)
+    enunciado=request.form['enunciado']
+    
+    #print(enunciado)
+    
+    #query="INSERT INTO Preguntas (id_encuesta,enunciado) VALUES ("+str(code)+","+enunciado+")"
+    
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO Preguntas (id_encuesta,enunciado) VALUES (%s,%s)",(code,enunciado))
+    mysql.connection.commit()
+
+    query="UPDATE Encuestas SET preguntas="+str(lastPoll.getQuestion())+" WHERE id_encuesta ="+str(code)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
+    
+    return redirect(url_for('nueva_encuesta_code', code = lastPoll.getCode()))
+
+#-------------------------------
+@app.route("/enunciado_pregunta", methods=['POST'])
+def enunciado_pregunta():
+    
+    code=lastPoll.getCode()
+    lastPoll.setQuestion(lastPoll.getQuestion()+1)
+    enunciado=request.form['enunciado']
+     
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO Preguntas (id_encuesta,enunciado) VALUES (%s,%s)",(code,enunciado))
+    mysql.connection.commit()
+
+    query="UPDATE Encuestas SET  preguntas="+str(lastPoll.getQuestion())+" WHERE id_encuesta ="+str(code)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
+   
+    
+    
+    return redirect(url_for('nueva_encuesta_code', code = code))
+
+@app.route("/nueva_pregunta/<num>", methods=['POST'])
+def nueva_pregunta(num):
+    if request.method =='POST':
+        
+        print(".")
+        print(".")
+        print(".")
+        print(".")
+        print("Recogi lo siguiente:")
+        print(num)
+    
+        title=request.form['title']
+        des=request.form['description']
+        
+        
+            
+        print(title)
+        print(des)
+        
+        for i in range(lastPoll.getQuestion()):
+            question=request.form['question'+str(i)]
+
+            #questions.append(request.form['question'+str(i)])
+            #print(request.form['question'+str(i)])
+            cur = mysql.connection.cursor()
+            query="UPDATE Preguntas SET enunciado='"+str(question)+"' WHERE id_encuesta ="+str(num)
+            print(query)
+            cur.execute(query)
+            mysql.connection.commit()
+            
+        
+
+        lastPoll.setQuestion(lastPoll.getQuestion()+1)
+
+        query="UPDATE Encuestas SET nombre='"+str(title)+"',descripcion='"+str(des)+"',  preguntas="+str(lastPoll.getQuestion())+" WHERE id_encuesta ="+str(num)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mysql.connection.commit()
+        
+        
+        
+        enunciado="''"
+        query="INSERT INTO Preguntas (id_encuesta,enunciado) VALUES ("+str(num)+","+enunciado+")"
+        print(query)
+        cur.execute(query)
+        mysql.connection.commit()
+        
+        return redirect(url_for('nueva_encuesta_code', code=num))
+
+    
+
+
+
+#-------------------------------
 
 #-------------------------------
 #-------------------------------
@@ -164,7 +153,7 @@ def encuestas():#----> pagina
     
     Ready = cur1.fetchall()
 
-    #print(Ready)
+    
     
     cur2 = mysql.connection.cursor()
     cur2.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado, E.fecha_inicio,E.fecha_fin,E.preguntas FROM Encuestas as E WHERE E.estado='Abierta'")
@@ -184,15 +173,31 @@ def encuestas():#----> pagina
 
 #-------------------------------
 
+@app.route("/responder_encuesta/<num>") #, methods=['POST']
+def responder_encuesta(num):
+    cur1 = mysql.connection.cursor()
+    cur1.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado,E.preguntas FROM Encuestas as E WHERE E.id_encuesta=%s",[num])
+
+    pollv = cur1.fetchall()
+    cur2 = mysql.connection.cursor()
+    cur2.execute("SELECT P.enunciado FROM Preguntas as P WHERE P.id_encuesta=%s",[num])
+    questionv=cur2.fetchall()
+    return render_template("responder_encuesta.html"
+    ,pollv=pollv
+    ,questionv=questionv)
+
+#-------------------------------
+
 @app.route("/nueva_encuesta")
 def nueva_encuesta():
-
+    
     cur = mysql.connection.cursor()
-    title="nueva encuesta"
-    des="sin descripción"
+    
+    title=""
+    des=""
     cur.execute("INSERT INTO Encuestas (nombre, descripcion,estado, preguntas) VALUES (%s,%s,'Por realizar',0)",(title,des))
     mysql.connection.commit()
-
+    
     cur.execute("SELECT LAST_INSERT_ID()")
     code = cur.fetchall()
     
@@ -204,70 +209,77 @@ def nueva_encuesta():
 
 #-------------------------------
 
-@app.route("/crear_pregunta", methods=['POST'])
-def crear_pregunta():
-
-    code=lastPoll.getCode()
-    lastPoll.setQuestion(lastPoll.getQuestion()+1)
-    enunciado=request.form['enunciado']
-    
-    #print(enunciado)
-    
-    #query="INSERT INTO Preguntas (id_encuesta,enunciado) VALUES ("+str(code)+","+enunciado+")"
-    
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO Preguntas (id_encuesta,enunciado) VALUES (%s,%s)",(code,enunciado))
-    mysql.connection.commit()
-
-    query="UPDATE Encuestas SET preguntas="+str(lastPoll.getQuestion())+" WHERE id_encuesta ="+str(code)
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    mysql.connection.commit()
-   
-    return redirect(url_for('nueva_encuesta_code', code = lastPoll.getCode()))
-
-#-------------------------------
-
 @app.route("/nueva_encuesta/<code>")
 def nueva_encuesta_code(code):
-    """
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado,E.preguntas FROM Encuestas as E WHERE E.id_encuesta=%s",[code])
-    pollv = cur.fetchall()
+   
+    cur1 = mysql.connection.cursor()
+    cur1.execute("SELECT E.id_encuesta,E.nombre,E.descripcion, E.estado,E.preguntas FROM Encuestas as E WHERE E.id_encuesta=%s",[code])
+
+    polln = cur1.fetchall()
+    cur2 = mysql.connection.cursor()
+    cur2.execute("SELECT P.enunciado FROM Preguntas as P WHERE P.id_encuesta=%s",[code])
+    questionn=cur2.fetchall()
     
 
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO Preguntas (id_encuesta,enunciado) VALUES (%s,'nueva pregunta')",(code))
-    mysql.connection.commit()
-
-
-
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT P.id_encuesta,P.enunciado FROM Preguntas as P WHERE P.id_encuesta=%s",[code])
-    questions = cur.fetchall()
-    """
-    
     return render_template("nueva_encuesta.html"
-    ,code=code)
-
-    #,pollv=pollv
-    #,questions=questions
+    ,polln=polln
+    ,questionn=questionn)
 
 #-------------------------------
 @app.route("/cancelar_nueva_encuesta")
 def cancelar_nueva_encuesta():
-    query='DELETE FROM Encuestas WHERE id_encuesta ='+str(lastPoll.getCode())
+
+
+    query='DELETE FROM Preguntas WHERE id_encuesta ='+str(lastPoll.getCode())
     cur = mysql.connection.cursor()
     cur.execute(query)
     mysql.connection.commit()
+    query='DELETE FROM Encuestas WHERE id_encuesta ='+str(lastPoll.getCode())
+    cur.execute(query)
+    mysql.connection.commit()
+    
 
     return redirect(url_for('encuestas'))
 
-@app.route("/crear_encuesta", methods=['POST'])
-def crear_encuesta():
+@app.route("/crear_encuesta/<num>", methods=['POST'])
+def crear_encuesta(num):
     
     if request.method =='POST':
+        print(".")
+        print(".")
+        print(".")
+        print(".")
+        print("Recogi lo siguiente:")
+        print(num)
+        title=request.form['title']
+        des=request.form['description']
         
+            
+        print(title)
+        print(des)
+        
+        for i in range(lastPoll.getQuestion()):
+            print('question'+str(i))
+            #questions.append(request.form['question'+str(i)])
+            #print(request.form['question'+str(i)])
+            cur = mysql.connection.cursor()
+            query="UPDATE Preguntas SET enunciado='"+str(request.form['question'+str(i)])+"' WHERE id_encuesta ="+str(num)
+            print(query)
+            cur.execute(query)
+            mysql.connection.commit()
+            
+        
+
+        
+
+        query="UPDATE Encuestas SET nombre='"+str(title)+"',descripcion='"+str(des)+"' WHERE id_encuesta ="+str(num)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mysql.connection.commit()
+        
+
+        
+        """
         code=lastPoll.getCode()
         title=request.form['title']
         des=request.form['description']
@@ -279,7 +291,7 @@ def crear_encuesta():
         cur = mysql.connection.cursor()
         cur.execute(query)
         mysql.connection.commit()
-        """
+        
         newpoll=Poll()
         newpoll.setCode(code)
         newpoll.setTitle(title)
@@ -433,7 +445,6 @@ def elim_encuestado(email):
 
 #-------------------------------
 #-------------------------------
-
 #Login
 
 #-------------------------------
@@ -457,3 +468,5 @@ def sigin():
 
 
 #-------------------------------
+
+

@@ -52,7 +52,7 @@
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="ready" role="tabpanel" aria-labelledby="home-tab">
           <h1 class="p-3 mb-2 bg-primary text-white">Por Hacer</h1>
-          <table class="table" class="scrollbar .scrollbar-primary">
+          <table class="table" class="overflow-scroll">
               <thead>
                   <tr>
                       <th scope="col">N°</th>
@@ -88,7 +88,7 @@
         <div class="tab-pane fade " id="open" role="tabpanel" aria-labelledby="profile-tab">
           <h1 class="p-3 mb-2 bg-success text-white">Encuestas abiertas</h1>
 
-          <table class="table" class="scrollbar .scrollbar-default">
+          <table class="table" class="overflow-scroll">
               <thead>
                   <tr>
                       <th scope="col">N°</th>
@@ -114,7 +114,7 @@
                           <td scope="col">{{pollo.6}}</td>
                                       
                           <td scope="col">
-                        
+                            <a href="/responder_encuesta/{{pollo.0}}" class="btn btn-success">Responder</a>
                                 <a href="/cerrar_encuesta/{{pollo.0}}" class="btn btn-warning">Cerrar</a>
                                 <a href="/editar_encuesta/{{pollo.0}}" class="btn btn-secondary">Visualizar</a> <!--/editar_encuesta/{{pollo.1}}-->
                                 <a href="/eliminar_encuesta/{{pollo.0}}" class="btn btn-danger">Eliminar</a><!--/eliminar_encuesta/{{pollo.1}}-->
@@ -131,7 +131,7 @@
         </div>
         <div class="tab-pane fade" id="closed" role="tabpanel" aria-labelledby="contact-tab">
           <h1 class="p-3 mb-2 bg-danger text-white">Encuestas cerradas</h1>
-          <table class="table"  class="scrollbar .scrollbar-danger">
+          <table class="table"  class="overflow-scroll">
               <thead>
                   <tr>
                       <th scope="col">N°</th>

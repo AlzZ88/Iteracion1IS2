@@ -10,12 +10,10 @@
     <title>nueva_encuesta</title>
 </head>
 <body>
-    <header>
-		  <h1 class="title">Nombre empresa</h1>
-	  </header>
+  <header>
+    <h1 class="title">Nombre empresa</h1>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,17 +22,92 @@
           <a class="nav-link" href="/cancelar_nueva_encuesta">
             <button class="btn btn-outline-secondary" type="button">Volver</button>
           </a>
-          <a class="nav-link" href="/">
-            <button class="btn btn-outline-secondary" type="button">Nueva Pregunta</button>
-          </a> 
-          <a class="nav-link" href="/login">
-            <button class="btn btn-danger" type="button">LogOut</button>
-        
-        </a>
+          
         </div>
         </div	>
       </div>
     </nav>
+  </header>
+  <div>
+    <form  action="/" method="POST">
+    
+      <div class="shadow p-3 mb-5 bg-body rounded">
+        <label for="Input1" class="form-label">
+          
+          <strong>Título:</strong>
+          
+        </label>
+        
+
+        <input  class="form-control" name="title"  placeholder="Nueva encuesta Nacional" value="{{polln[0].1}}">
+        
+        
+        
+        <label for="Textarea1" class="form-label">
+          
+          <strong>Descripción:</strong>
+          
+ 
+        </label>
+        
+        <input  class="form-control" name="description"  placeholder="Es una encuesta para cosas nacionales"value="{{polln[0].2}}">
+        
+      </div>
+      <div >
+        <ul>
+          {% for i in range(polln[0].4) %}
+          
+            <div class="shadow p-3 mb-5 bg-body rounded">
+              <li>
+                
+                <label for="Input1" class="form-label"><strong>Pregunta {{i+1}}:</strong></label>
+                
+                
+
+                <input class="form-control" name="question{{i}}"  placeholder="¿Qué tal tu día?" value="{{questionn[i].0}}">
+                
+                
+                
+                <ul>
+                  <li class="form-check">
+                    
+                    <label class="form-check-label " for="exampleRadios1">
+                      Item
+                    </label>
+                  </li>
+                  <li class="form-check">
+                    
+                    <label class="form-check-label " for="exampleRadios1">
+                      Item
+                    </label>
+                  </li>
+                  <li class="form-check">
+                    
+                    <label class="form-check-label " for="exampleRadios1">
+                      Item
+                    </label>
+                  </li>
+                </ul>
+              </li>  
+            </div>
+          {% endfor %}  
+        </ul>  
+  
+      </div>
+      <div>
+        <button type="submit" formaction="/crear_encuesta/{{polln[0].0}}" class="btn btn-success">Guardar</button>
+        
+        <button type="submit" formaction="/nueva_pregunta/{{polln[0].0}}" class="btn btn-warning">Nueva Pregunta</button>
+        
+        <a href="/cancelar_nueva_encuesta" class="btn btn-danger">Cancelar</a>
+      </div>
+    </form>
+  </div>
+  <!--
+    <header>
+		  
+	  </header>
+    
   
 
       <form action="/crear_encuesta" method="POST">
@@ -63,10 +136,10 @@
             <textarea class="form-control"  name="enunciado" placeholder="¿Cómo te encuestas hoy?" rows="2"></textarea>
           </div> 
           <div class="mb-3">
-            <!--<button type="button" class="btn btn-success me-2 pad">Agregar Opción</button>-->
+            <button type="button" class="btn btn-success me-2 pad">Agregar Opción</button>
             <button type="submit" class="btn btn-warning me-2 pad">nueva pregunta</button>
           </div>
-          <!--
+          
           <div class="mb-3">
             <div class="container ">
               <div class="mb-3">
@@ -76,19 +149,10 @@
                 <input  class="form-control" name="option2"  placeholder="me encuetro mal ">
               </div>  
             </div>
-          </div>--> 
+          </div> 
         </div>
       </form>
-      
-
-    
-    
-   
-    
-
-
-  
+    -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-	
 </body>
 </html>
